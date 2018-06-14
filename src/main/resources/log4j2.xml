@@ -3,7 +3,8 @@
 <configuration status="warn">
 	<appenders>
 		<console name="Console" target="SYSTEM_OUT">
-			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} - %m%n" />
+			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%-5p] (%c:%L) [%t] %highlight{%m}{FATAL=white,
+            ERROR=red, WARN=Yellow, INFO=Cyan, DEBUG=White} %n" />
 		</console>
 
 		<RollingRandomAccessFile name="asynLogger"
