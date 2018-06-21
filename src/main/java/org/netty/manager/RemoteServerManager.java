@@ -1,16 +1,16 @@
 package org.netty.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.net.telnet.TelnetClient;
 import org.netty.config.Config;
 import org.netty.config.RemoteServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 远程服务器管理器
@@ -58,7 +58,7 @@ public class RemoteServerManager {
 				availableList.add(remoteServer);
 			}
 		}
-		logger.info("available remoteServer size = " + availableList.size());
+		logger.debug("available remoteServer size = " + availableList.size());
 		if (availableList.size() > 0) {
 			return availableList.get(random.nextInt(availableList.size()));
 		}

@@ -56,7 +56,7 @@ public final class OutRelayHandler extends ChannelInboundHandlerAdapter {
 	public void channelInactive(ChannelHandlerContext ctx) {
 		SocksServerUtils.closeOnFlush(relayChannel);
 		SocksServerUtils.closeOnFlush(ctx.channel());
-		logger.info("outRelay channelInactive close");
+		logger.debug("outRelay channelInactive close");
 	}
 
 	@Override
