@@ -1,11 +1,11 @@
 package org.netty;
 
-import java.lang.management.ManagementFactory;
-import java.util.concurrent.Executors;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.traffic.GlobalTrafficShapingHandler;
+import io.netty.handler.traffic.TrafficCounter;
 import org.netty.config.Config;
 import org.netty.config.ConfigXmlLoader;
 import org.netty.config.PacLoader;
@@ -15,12 +15,10 @@ import org.netty.proxy.SocksServerInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.traffic.GlobalTrafficShapingHandler;
-import io.netty.handler.traffic.TrafficCounter;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
+import java.util.concurrent.Executors;
 
 public class SocksServer {
 
