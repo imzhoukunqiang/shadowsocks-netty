@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /**
  * Project <shadowsocks-netty>
  * Created by zkq on 2018/6/20 10:00.
@@ -34,5 +36,12 @@ public class ProxyController {
     public Result<String> pacScript() {
         return proxyService.pacScript();
     }
+
+
+    @RequestMapping("/trafficStatistics")
+    public Result<Map<String, String>> trafficStatistics() {
+        return proxyService.trafficStatistics();
+    }
+
 
 }

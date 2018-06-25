@@ -23,13 +23,8 @@
 	</appenders>
 
 	<loggers>
-		<AsyncLogger name="org.netty" level="info" additivity="false"
-			includeLocation="true">
-			<AppenderRef ref="asynLogger" />
-			<AppenderRef ref="Console" />
-		</AsyncLogger>
-		<AsyncRoot level="info" includeLocation="true">
-			<AppenderRef ref="asynLogger" />
+ 		<AsyncRoot level="info" includeLocation="true">
+			<!--<AppenderRef ref="asynLogger" />-->
 			<AppenderRef ref="Console" />
 		</AsyncRoot>
 	</loggers>

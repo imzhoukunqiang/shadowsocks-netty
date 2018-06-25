@@ -43,7 +43,25 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
 
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
+
+
+        setProxy(request.host());
+        final Channel inboundChannel = ctx.channel();
+
+        InetAddress address = getAddress(inboundChannel);
+        logger.info("address = " + String.valueOf(address) + ",host = " + request.host() + ",port = " + request.port() + ",isProxy = " + isProxy);
+
+        if (!isProxy) {
+
+            return;
+        }
+
         Promise<Channel> promise = ctx.executor().newPromise();
+        b.group(inboundChannel.eventLoop()).channel(NioSocketChannel.class)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000).option(ChannelOption.SO_KEEPALIVE, true)
+                .handler(new DirectClientHandler(promise));
+
+
         promise.addListener(new GenericFutureListener<Future<Channel>>() {
             @Override
             public void operationComplete(final Future<Channel> future) throws Exception {
@@ -76,14 +94,6 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
             }
         });
 
-        final Channel inboundChannel = ctx.channel();
-        b.group(inboundChannel.eventLoop()).channel(NioSocketChannel.class)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000).option(ChannelOption.SO_KEEPALIVE, true)
-                .handler(new DirectClientHandler(promise));
-
-        setProxy(request.host());
-        InetAddress address = getAddress(inboundChannel);
-        logger.info("address = " + String.valueOf(address) + ",host = " + request.host() + ",port = " + request.port() + ",isProxy = " + isProxy);
 
         b.connect(getIpAddr(request), getPort(request)).addListener(new ChannelFutureListener() {
             @Override
@@ -100,6 +110,16 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
         SocketAddress socketAddress = inboundChannel.remoteAddress();
         return socketAddress instanceof InetSocketAddress ? ((InetSocketAddress) socketAddress).getAddress() : null;
     }
+
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        if (!isProxy) {
+            SocksServerUtils.closeOnFlush(ctx.channel());
+        }
+        super.channelReadComplete(ctx);
+    }
+
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
