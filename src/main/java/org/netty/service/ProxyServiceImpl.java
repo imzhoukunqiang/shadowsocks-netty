@@ -55,7 +55,7 @@ public class ProxyServiceImpl implements ProxyService {
     @Override
     public Result<Map<String, String>> trafficStatistics() {
         TrafficCounter trafficCounter = SocksServer.getInstance().getTrafficCounter();
-        String downloadSpeed = formatNumber(trafficCounter.lastWriteThroughput())+ "/S";
+        String downloadSpeed = formatNumber(trafficCounter.lastWriteThroughput()) + "/S";
         String uploadSpeed = formatNumber(trafficCounter.lastReadThroughput()) + "/S";
         long download = trafficCounter.cumulativeWrittenBytes();
         String totalDownload;

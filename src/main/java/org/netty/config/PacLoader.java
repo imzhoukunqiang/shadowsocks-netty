@@ -18,129 +18,132 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 加载pac配置xml
- * 
+ *
  * @author zhaohui
- * 
  */
 public class PacLoader {
 
-	private static Logger log = LoggerFactory.getLogger(PacLoader.class);
+    private static Logger log = LoggerFactory.getLogger(PacLoader.class);
 
-	private static List<String> domainList = new ArrayList<String>();
-	private static List<String> tempList = new ArrayList<String>();
-	/**是否是全局代理模式**/
-	private static boolean _global_mode;
+    private static List<String> domainList = new ArrayList<String>();
+    private static List<String> tempList = new ArrayList<String>();
+    /**
+     * 是否是全局代理模式
+     **/
+    private static boolean _global_mode;
 
-	/** 重加载的间隔时间 **/
-	private static int reloadTime = 5;
+    /**
+     * 重加载的间隔时间
+     **/
+    private static int reloadTime = 5;
 
-	private static long lastModify;
+    private static long lastModify;
 
-	public static void load(final String filePath) throws Exception {
-		File file = new File(filePath);
-		if (!file.exists()) {
-			throw new RuntimeException("file = " + filePath + " is not exist!");
-		}
-		if (file.lastModified() == lastModify) {
-			return;
-		}
-		lastModify = file.lastModified();
+    public static void load(final String filePath) throws Exception {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            throw new RuntimeException("file = " + filePath + " is not exist!");
+        }
+        if (file.lastModified() == lastModify) {
+            return;
+        }
+        lastModify = file.lastModified();
 
-		loadFile(filePath);
+        loadFile(filePath);
 
-		Executors.newScheduledThreadPool(1).scheduleWithFixedDelay(new Runnable() {
+        Executors.newScheduledThreadPool(1).scheduleWithFixedDelay(new Runnable() {
 
-			@Override
-			public void run() {
-				try {
-					load(filePath);
-				} catch (Exception e) {
-					log.error("load pac error", e);
-				}
-			}
-		}, reloadTime, reloadTime, TimeUnit.SECONDS);
-	}
+            @Override
+            public void run() {
+                try {
+                    load(filePath);
+                } catch (Exception e) {
+                    log.error("load pac error", e);
+                }
+            }
+        }, reloadTime, reloadTime, TimeUnit.SECONDS);
+    }
 
-	private synchronized static void loadFile(String file) throws Exception {
-		tempList.clear();
-		InputStream in = null;
-		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			in = new FileInputStream(file);
-			Document doc = builder.parse(in);
-			NodeList list = doc.getElementsByTagName("domain");
+    private synchronized static void loadFile(String file) throws Exception {
+        tempList.clear();
+        InputStream in = null;
+        try {
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            in = new FileInputStream(file);
+            Document doc = builder.parse(in);
+            NodeList list = doc.getElementsByTagName("domain");
 
-			if (list.getLength() > 0) {
-				for (int j = 0; j < list.getLength(); j++) {
-					tempList.add(list.item(j).getTextContent());
-				}
-			}
-			setDomainList(tempList);
+            if (list.getLength() > 0) {
+                for (int j = 0; j < list.getLength(); j++) {
+                    tempList.add(list.item(j).getTextContent());
+                }
+            }
+            setDomainList(tempList);
 
-			NodeList globalList = doc.getElementsByTagName("global_mode");
-			if (globalList.getLength() > 0) {
-				String global = globalList.item(0).getTextContent();
-				if ("true".equalsIgnoreCase(global)) {
-					set_global_mode(true);
-				} else {
-					set_global_mode(false);
-				}
-			}
+            NodeList globalList = doc.getElementsByTagName("global_mode");
+            if (globalList.getLength() > 0) {
+                String global = globalList.item(0).getTextContent();
+                if ("true".equalsIgnoreCase(global)) {
+                    set_global_mode(true);
+                } else {
+                    set_global_mode(false);
+                }
+            }
 
-			log.info("load pac !");
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-	}
+            log.info("load pac !");
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
 
-	private synchronized static void setDomainList(List<String> tempList) {
-		domainList.clear();
-		domainList.addAll(tempList);
-	}
+    private synchronized static void setDomainList(List<String> tempList) {
+        domainList.clear();
+        domainList.addAll(tempList);
+    }
 
-	/**
-	 * 指定的host是否需要代理
-	 * 
-	 * @param host
-	 * @return
-	 */
-	public synchronized static boolean isProxy(String host) {
-		String suffix;
-		int pos = host.lastIndexOf('.');
-		pos = host.lastIndexOf('.', pos - 1);
-		while (true) {
-			if (pos <= 0) {
-				if (domainList.contains(host)) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-			suffix = host.substring(pos + 1);
-			if (domainList.contains(suffix)) {
-				return true;
-			}
-			pos = host.lastIndexOf('.', pos - 1);
-		}
-	}
+    /**
+     * 指定的host是否需要代理
+     *
+     * @param host
+     * @return
+     */
+    public synchronized static boolean isProxy(String host) {
+        String suffix;
+        int pos = host.lastIndexOf('.');
+        pos = host.lastIndexOf('.', pos - 1);
+        while (true) {
+            if (pos <= 0) {
+                if (domainList.contains(host)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            suffix = host.substring(pos + 1);
+            if (domainList.contains(suffix)) {
+                return true;
+            }
+            pos = host.lastIndexOf('.', pos - 1);
+        }
+    }
 
-	public static List<String> getDomainList() {
-		return domainList;
-	}
+    public static List<String> getDomainList() {
+        return domainList;
+    }
 
-	public static boolean is_global_mode() {
-		return _global_mode;
-	}
+    public static boolean is_global_mode() {
+        return _global_mode;
+    }
 
-	public static void set_global_mode(boolean _global_mode) {
-		PacLoader._global_mode = _global_mode;
-	}
+    public static void set_global_mode(boolean _global_mode) {
+        PacLoader._global_mode = _global_mode;
+    }
 
 }

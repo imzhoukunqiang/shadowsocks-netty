@@ -42,8 +42,7 @@ public class SeedCrypt extends CryptBase {
 
         if (_name.equals(CIPHER_SEED_CFB)) {
             cipher = new CFBBlockCipher(engine, getIVLength() * 8);
-        }
-        else {
+        } else {
             throw new InvalidAlgorithmParameterException(_name);
         }
 

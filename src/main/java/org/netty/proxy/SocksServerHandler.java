@@ -18,47 +18,47 @@ import io.netty.handler.codec.socks.SocksRequest;
 @ChannelHandler.Sharable
 public final class SocksServerHandler extends SimpleChannelInboundHandler<SocksRequest> {
 
-	private static Logger logger = LoggerFactory.getLogger(SocksServerHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(SocksServerHandler.class);
 
-	@Override
-	public void channelRead0(ChannelHandlerContext ctx, SocksRequest socksRequest) throws Exception {
-		switch (socksRequest.requestType()) {
-		case INIT: {
-			logger.debug("localserver init");
-			ctx.pipeline().addFirst(new SocksCmdRequestDecoder());
-			ctx.write(new SocksInitResponse(SocksAuthScheme.NO_AUTH));
-			break;
-		}
-		case AUTH:
-			logger.debug("localserver auth");
-			ctx.pipeline().addFirst(new SocksCmdRequestDecoder());
-			ctx.write(new SocksAuthResponse(SocksAuthStatus.SUCCESS));
-			break;
-		case CMD:
-			SocksCmdRequest req = (SocksCmdRequest) socksRequest;
-			if (req.cmdType() == SocksCmdType.CONNECT) {
-				logger.debug("localserver connect");
-				ctx.pipeline().addLast(new SocksServerConnectHandler());
-				ctx.pipeline().remove(this);
-				ctx.fireChannelRead(socksRequest);
-			} else {
-				ctx.close();
-			}
-			break;
-		case UNKNOWN:
-			ctx.close();
-			break;
-		}
-	}
+    @Override
+    public void channelRead0(ChannelHandlerContext ctx, SocksRequest socksRequest) throws Exception {
+        switch (socksRequest.requestType()) {
+            case INIT: {
+                logger.debug("localserver init");
+                ctx.pipeline().addFirst(new SocksCmdRequestDecoder());
+                ctx.write(new SocksInitResponse(SocksAuthScheme.NO_AUTH));
+                break;
+            }
+            case AUTH:
+                logger.debug("localserver auth");
+                ctx.pipeline().addFirst(new SocksCmdRequestDecoder());
+                ctx.write(new SocksAuthResponse(SocksAuthStatus.SUCCESS));
+                break;
+            case CMD:
+                SocksCmdRequest req = (SocksCmdRequest) socksRequest;
+                if (req.cmdType() == SocksCmdType.CONNECT) {
+                    logger.debug("localserver connect");
+                    ctx.pipeline().addLast(new SocksServerConnectHandler());
+                    ctx.pipeline().remove(this);
+                    ctx.fireChannelRead(socksRequest);
+                } else {
+                    ctx.close();
+                }
+                break;
+            case UNKNOWN:
+                ctx.close();
+                break;
+        }
+    }
 
-	@Override
-	public void channelReadComplete(ChannelHandlerContext ctx) {
-		ctx.flush();
-	}
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable throwable) {
-		throwable.printStackTrace();
-		SocksServerUtils.closeOnFlush(ctx.channel());
-	}
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable throwable) {
+        throwable.printStackTrace();
+        SocksServerUtils.closeOnFlush(ctx.channel());
+    }
 }
