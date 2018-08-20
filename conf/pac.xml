@@ -109,5 +109,6 @@
 		<domain>golang.org</domain>
 		<domain>tensorflow.org</domain>
 		<domain>wikipedia.org</domain>
+		<domain>jetbrains.com</domain>
 	</domains>
 </pac>

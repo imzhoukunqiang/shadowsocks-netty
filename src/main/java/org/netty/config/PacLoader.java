@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,27 +40,28 @@ public class PacLoader {
 
     private static long lastModify;
 
+
+
+
     public static void load(final String filePath) throws Exception {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            throw new RuntimeException("file = " + filePath + " is not exist!");
-        }
-        if (file.lastModified() == lastModify) {
-            return;
-        }
-        lastModify = file.lastModified();
 
-        loadFile(filePath);
 
-        Executors.newScheduledThreadPool(1).scheduleWithFixedDelay(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    load(filePath);
-                } catch (Exception e) {
-                    log.error("load pac error", e);
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        scheduledExecutorService.scheduleWithFixedDelay(() -> {
+            try {
+                File file = new File(filePath);
+                if (!file.exists()) {
+                    throw new RuntimeException("file = " + filePath + " is not exist!");
                 }
+                if (file.lastModified() == lastModify) {
+                    return;
+                }
+                lastModify = file.lastModified();
+
+                loadFile(filePath);
+
+             } catch (Exception e) {
+                log.error("load pac error", e);
             }
         }, reloadTime, reloadTime, TimeUnit.SECONDS);
     }
