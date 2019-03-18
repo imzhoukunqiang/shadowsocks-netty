@@ -48,6 +48,9 @@ public final class SocksServerHandler extends SimpleChannelInboundHandler<SocksR
             case UNKNOWN:
                 ctx.close();
                 break;
+            default:
+                ctx.close();
+                break;
         }
     }
 

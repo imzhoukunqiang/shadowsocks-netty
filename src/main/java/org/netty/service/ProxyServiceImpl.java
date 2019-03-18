@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Project <shadowsocks-netty>
@@ -70,6 +67,18 @@ public class ProxyServiceImpl implements ProxyService {
         map.put("totalDownload", totalDownload);
         map.put("totalUpload", totalUpload);
         return ResultGenerator.genSuccessResult(map);
+    }
+
+    @Override
+    public String otherPacScript() {
+        String[] proxies = config.get("proxy.other.pac.script").split(";");
+        ArrayList<String> list = new ArrayList<>(Arrays.asList(proxies));
+        Collections.shuffle(list);
+        StringBuilder result = new StringBuilder("function FindProxyForURL(url, host) { ")
+                .append(" return \"")
+                .append(String.join(";", list))
+                .append(";DIRECT\" }");
+        return result.toString();
     }
 
     private String formatNumber(long number) {

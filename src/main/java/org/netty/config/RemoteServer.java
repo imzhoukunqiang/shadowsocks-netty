@@ -24,6 +24,7 @@ public class RemoteServer {
      **/
     private int status;
 
+    @Override
     public String toString() {
         return "_ipAddr = " + get_ipAddr() + ",_port = " + get_port();
     }

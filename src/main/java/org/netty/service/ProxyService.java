@@ -17,4 +17,5 @@ public interface ProxyService {
 
     Result<Map<String, String>> trafficStatistics();
 
+    String otherPacScript();
 }
