@@ -69,6 +69,7 @@
                         <exclude>*.properties</exclude>
                         <exclude>*.xml</exclude>
                         <exclude>*.yml</exclude>
+                        <exclude>static/*</exclude>
                     </excludes>
 				</configuration>
 			</plugin>

@@ -1,20 +1,25 @@
 function FindProxyForURL(url, host) {
     let proxyArray = [
-        "HTTPS hgc.ghelper.net:2443;",
-        "HTTPS pccw7.ghelper.net:443;",
-        // "HTTPS www.tcpbbr.net:443;",
-        // "HTTPS www.pickdown.net:1443;",
-        // "HTTPS www.51netflix.com:1443;",
-        "HTTPS us02.ghelper.net:443;",
-        "HTTPS us.onhop.net:443;",
-        "HTTPS gia.onhop.net:443;",
-        "HTTPS hgc.tcpbbr.net:443;",
-        "HTTPS ru.onhop.net:443;",
+        "HTTPS hgc.ghelper.net:443",
+        "HTTPS pccw7.ghelper.net:443",
+
+        "HTTPS www.pickdown.net:1443",
+        "HTTPS us02.ghelper.net:443",
+        // "HTTPS www.tcpbbr.net:443",
+        // "HTTPS www.51netflix.com:1443",
+        // "HTTPS us.onhop.net:443",
+        // "HTTPS gia.onhop.net:443",
+        // "HTTPS hgc.tcpbbr.net:443",
+        // "HTTPS ru.onhop.net:443",
         "DIRECT"
     ];
 
     let proxyList = proxyArray.join("");
-    let fastProxy = "HTTPS www.letswe.bid:443;HTTPS www.wanniba.xyz:443;HTTPS www.oktrade.online:7766;" + proxyList;
+    let fastProxy = [
+        "HTTPS www.wanniba.xyz:443",
+        "HTTPS www.oktrade.online:7766",
+        // "HTTPS www.letswe.bid:443",
+    ].join(";") + ";" + proxyList;
 
     if (host == "android.com" || shExpMatch(host, "*.android.com")) {
         return fastProxy;
